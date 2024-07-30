@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "rakbank.fullname" . }}
+  labels:
+    {{- include "rakbank.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "rakbank.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "rakbank.name" . }}
+    spec:
+      containers:
+      - name: {{ include "rakbank.name" . }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        #image: "{{ .Values.image.repository }}@{{ .Values.image.digest }}"
+        ports:
+        - containerPort: 8088
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.readinessProbe.httpGet.path }}
+            port: {{ .Values.readinessProbe.httpGet.port }}
+          initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.livenessProbe.httpGet.path }}
+            port: {{ .Values.livenessProbe.httpGet.port }}
+          initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.livenessProbe.periodSeconds }}

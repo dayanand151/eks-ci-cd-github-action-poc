@@ -1,0 +1,32 @@
+replicaCount: 2
+
+image:
+  repository: 211125715340.dkr.ecr.ap-south-1.amazonaws.com/rakbankdemoregistry
+  tag: "ab617e2842796fe37fe6d0c14567d0c789906c6a"
+  pullPolicy: IfNotPresent
+  
+service:
+  type: LoadBalancer
+  port: 8088
+
+hpa:
+  minReplicas: 1
+  maxReplicas: 10
+  cpu:
+    targetAverageUtilization: 50
+  memory:
+    targetAverageUtilization: 50
+
+readinessProbe:
+  httpGet:
+    path: /helloWorld
+    port: 8088
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+livenessProbe:
+  httpGet:
+    path: /helloWorld
+    port: 8088
+  initialDelaySeconds: 15
+  periodSeconds: 20
